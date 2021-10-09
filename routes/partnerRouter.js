@@ -75,4 +75,4 @@ partnerRouter.route('/:partnerId')
             .catch(err => next(err));
     });
 
-module.exports = campsiteRouter;
+module.exports = partnerRouter;
