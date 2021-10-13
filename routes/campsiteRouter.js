@@ -1,8 +1,11 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const Campsite = require('../models/campsite');
 const authenticate = require('../authenticate');
 
 const campsiteRouter = express.Router();
+
+campsiteRouter.use(bodyParser.json());
 
 campsiteRouter.route('/')
     .get((req, res, next) => {
@@ -50,7 +53,6 @@ campsiteRouter.route('/:campsiteId')
             })
             .catch(err => next(err));
     })
-
     .post(authenticate.verifyUser, (req, res) => {
         res.statusCode = 403;
         res.end(`POST operation not supported on /campsites/${req.params.campsiteId}`);

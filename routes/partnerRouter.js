@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const Partner = require('../models/partner');
 const authenticate = require('../authenticate');
 
@@ -19,7 +20,7 @@ partnerRouter.route('/')
     .post(authenticate.verifyUser, (req, res, next) => {
         Partner.create(req.body)
             .then(partner => {
-                console.log('Partner Created ', partner);
+                console.log('Partner Created', partner);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(partner);
@@ -50,9 +51,9 @@ partnerRouter.route('/:partnerId')
             })
             .catch(err => next(err));
     })
-    .post(authenticate.verifyUser, (req, res) => {
+    .post(authenticate.verifyUser, (req, res, next) => {
         res.statusCode = 403;
-        res.end(`POST operation not supported on /partners/${req.params.partnerId}`);
+        res.end(`POST operation not supported on /partner/${req.params.partnerId}`);
     })
     .put(authenticate.verifyUser, (req, res, next) => {
         Partner.findByIdAndUpdate(req.params.partnerId, {
