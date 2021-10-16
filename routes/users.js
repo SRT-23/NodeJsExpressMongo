@@ -1,19 +1,23 @@
 const express = require('express');
-const passport = require('passport');
 const User = require('../models/user');
+const passport = require('passport');
 const authenticate = require('../authenticate');
 const router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+  if (req.user.admin) {
+    return User.find();
+  } else {
+    const err = new Error('You are not an admin!');
+    err.status = 403;
+    return next(err);
+  }
 });
 
 router.post('/signup', (req, res) => {
-  User.register(
-    new User({ username: req.body.username }),
-    req.body.password,
-    (err, user) => {
+  User.register(new User({ username: req.body.username }),
+    req.body.password, (err, user) => {
       if (err) {
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json');
@@ -39,8 +43,7 @@ router.post('/signup', (req, res) => {
           });
         });
       }
-    }
-  );
+    });
 });
 
 router.post('/login', passport.authenticate('local'), (req, res) => {
@@ -57,7 +60,7 @@ router.get('/logout', (req, res, next) => {
     res.redirect('/');
   } else {
     const err = new Error('You are not logged in!');
-    err.status = 401;
+    err.status = 403;
     return next(err);
   }
 });
